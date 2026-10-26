@@ -38,6 +38,8 @@ body {
   --chat-text: #333333;
   --chat-muted: #777777;
   --chat-border: #dedede;
+  --json-key: #0451a5;
+  --json-string: #a31515;
   background: var(--content-bg);
   color-scheme: light;
 }
@@ -63,6 +65,8 @@ body {
   --chat-text: #cccccc;
   --chat-muted: #9d9d9d;
   --chat-border: #3c3c3c;
+  --json-key: #9cdcfe;
+  --json-string: #ce9178;
   color-scheme: dark;
 }
 

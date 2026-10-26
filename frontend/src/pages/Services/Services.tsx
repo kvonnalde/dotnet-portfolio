@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   BarChart3,
   Boxes,
   Cloud,
@@ -7,9 +6,10 @@ import {
   Sparkles,
   Workflow,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import { services } from "../../data/services";
+
+type Service = (typeof services)[number];
 
 const serviceIcons: Record<string, LucideIcon> = {
   "Web App Development": Code2,
@@ -20,285 +20,134 @@ const serviceIcons: Record<string, LucideIcon> = {
   Automation: Workflow,
 };
 
-const serviceTags: Record<string, string[]> = {
-  "Web App Development": ["React", ".NET", "Azure", "TypeScript"],
-  "Cloud & DevOps": ["Azure", "Docker", "GitHub Actions", "CI/CD"],
-  "AI Integration": ["Azure OpenAI/Foundry", "OpenAI", "RAG"],
-  "Report Development": ["Power BI", "SQL Server", "Excel"],
-  "Low-Code No-Code Development": ["Mendix", "Power Apps", "SharePoint"],
-  Automation: ["Power Automate", "n8n", "Logic Apps"],
+const serviceAccents: Record<string, string> = {
+  "Web App Development": "bg-blue-500/10 text-blue-600",
+  "Cloud & DevOps": "bg-sky-500/10 text-sky-600",
+  "AI Integration": "bg-indigo-500/10 text-indigo-600",
+  "Report Development": "bg-emerald-500/10 text-emerald-600",
+  "Low-Code No-Code Development": "bg-violet-500/10 text-violet-600",
+  Automation: "bg-amber-500/10 text-amber-600",
 };
 
-const visualStyles: Record<string, { panel: string; frame: string; tile: string; icon: string }> = {
-  "Web App Development": {
-    panel: "bg-blue-50",
-    frame: "border-blue-200",
-    tile: "bg-blue-100",
-    icon: "text-blue-700",
-  },
-  "Cloud & DevOps": {
-    panel: "bg-sky-50",
-    frame: "border-sky-200",
-    tile: "bg-sky-100",
-    icon: "text-sky-700",
-  },
-  "AI Integration": {
-    panel: "bg-indigo-500/10",
-    frame: "border-white/10",
-    tile: "bg-white/10",
-    icon: "text-indigo-100",
-  },
-  "Report Development": {
-    panel: "bg-emerald-50",
-    frame: "border-emerald-200",
-    tile: "bg-emerald-100",
-    icon: "text-emerald-700",
-  },
-  "Low-Code No-Code Development": {
-    panel: "bg-violet-50",
-    frame: "border-violet-200",
-    tile: "bg-violet-100",
-    icon: "text-violet-700",
-  },
-  Automation: {
-    panel: "bg-amber-50",
-    frame: "border-amber-200",
-    tile: "bg-amber-100",
-    icon: "text-amber-700",
-  },
+// Soft, hue-matched tint for each service's code card so it reads as part of the page, not a terminal.
+const servicePanelAccents: Record<string, { panel: string; dot: string }> = {
+  "Web App Development": { panel: "bg-blue-500/[0.06] border-blue-500/15", dot: "bg-blue-400" },
+  "Cloud & DevOps": { panel: "bg-sky-500/[0.06] border-sky-500/15", dot: "bg-sky-400" },
+  "AI Integration": { panel: "bg-indigo-500/[0.06] border-indigo-500/15", dot: "bg-indigo-400" },
+  "Report Development": { panel: "bg-emerald-500/[0.06] border-emerald-500/15", dot: "bg-emerald-400" },
+  "Low-Code No-Code Development": { panel: "bg-violet-500/[0.06] border-violet-500/15", dot: "bg-violet-400" },
+  Automation: { panel: "bg-amber-500/[0.06] border-amber-500/15", dot: "bg-amber-400" },
 };
 
-function ServiceVisual({
-  title,
-  className = "",
-  dark = false,
-}: {
-  title: string;
-  className?: string;
-  dark?: boolean;
-}) {
-  const Icon = serviceIcons[title] ?? Sparkles;
-  const style = visualStyles[title] ?? visualStyles["AI Integration"];
-
-  return (
-    <div
-      aria-hidden="true"
-      className={`relative flex min-h-24 items-center justify-center overflow-hidden rounded-lg border ${
-        dark ? "border-white/10 bg-white/5" : `border-transparent ${style.panel}`
-      } ${className}`}
-    >
-      <div
-        className={`absolute h-24 w-24 rotate-12 rounded-2xl border ${
-          dark ? "border-white/10" : style.frame
-        }`}
-      />
-      <div
-        className={`relative flex h-16 w-16 items-center justify-center rounded-2xl shadow-sm ${
-          dark ? "bg-white/10" : style.tile
-        }`}
-      >
-        <Icon className={`h-8 w-8 ${dark ? "text-indigo-100" : style.icon}`} />
-      </div>
-    </div>
-  );
-}
-
-function ServiceTags({ title, dark = false }: { title: string; dark?: boolean }) {
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {(serviceTags[title] ?? []).map((tag) => (
-        <span
-          key={tag}
-          className={`rounded-md px-2 py-1 text-[11px] font-medium ${
-            dark
-              ? "bg-white/10 text-slate-100 ring-1 ring-white/10"
-              : "bg-slate-100 text-slate-700"
-          }`}
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
+function slugify(title: string) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export default function Services() {
-  const featured = services.find((service) => service.title === "AI Integration");
-  const webDevelopment = services.find(
-    (service) => service.title === "Web App Development",
-  );
-  const supportingServices = services.filter(
-    (service) =>
-      service.title !== "AI Integration" &&
-      service.title !== "Web App Development" &&
-      service.title !== "Low-Code No-Code Development",
-  );
-  const lowCode = services.find(
-    (service) => service.title === "Low-Code No-Code Development",
-  );
-
   return (
     <section>
-      <header className="flex flex-col justify-between gap-6 border-b border-slate-200 pb-6 @min-[48rem]/editor:flex-row @min-[48rem]/editor:items-end">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
-            Services
-          </p>
-          <h1 className="mt-2 text-3xl font-extrabold leading-tight text-slate-900 @min-[40rem]/editor:text-4xl">
-            Turning ideas into real solutions.
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 @min-[40rem]/editor:text-base">
-            From web applications and cloud delivery to AI, reporting, and automation,
-            I help take useful ideas from first draft to dependable tools.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 @min-[40rem]/editor:flex @min-[40rem]/editor:gap-5">
-          {[
-            [String(services.length), "Service areas"],
-            ["3+ Years", "Experience"],
-          ].map(([value, label]) => (
-            <div key={label} className="min-w-24 border-l-2 border-indigo-300 pl-3">
-              <p className="text-lg font-bold text-slate-900">{value}</p>
-              <p className="text-xs text-slate-500">{label}</p>
-            </div>
-          ))}
-        </div>
-      </header>
+      <h1 className="flex items-center gap-2 text-3xl font-extrabold tracking-tight text-[var(--chrome-text)]">
+        <span aria-hidden="true">🎖️</span> Services
+      </h1>
+      <p className="mt-2 text-[var(--chrome-muted)]">
+        From idea to deployment, I help you build scalable, secure, and modern applications.
+      </p>
 
-      <div className="mt-6 grid gap-4 @min-[64rem]/editor:grid-cols-5">
-        {featured && (
-          <article className="grid gap-5 overflow-hidden rounded-lg bg-slate-900 p-5 text-white @min-[40rem]/editor:p-6 @min-[64rem]/editor:col-span-3 @min-[64rem]/editor:grid-cols-[1.1fr_0.9fr] @min-[64rem]/editor:items-center">
-            <div>
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-indigo-500/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-indigo-200">
-                <Sparkles className="h-3.5 w-3.5" /> Featured service
-              </span>
-              <h2 className="mt-4 text-2xl font-bold">{featured.title}</h2>
-              <p className="mt-1 text-sm font-medium text-slate-200">
-                {featured.description}
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                {featured.overview}
-              </p>
-              <div className="mt-4">
-                <ServiceTags title={featured.title} dark />
-              </div>
-              <Link
-                to="/contact"
-                className="mt-5 inline-flex items-center gap-2 rounded-md bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-400"
-              >
-                Explore AI solutions <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <ServiceVisual title={featured.title} className="min-h-48" dark />
-          </article>
-        )}
+      <hr className="my-5 border-[var(--chrome-border)]" />
 
-        {webDevelopment && (
-          <article className="grid gap-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm @min-[40rem]/editor:grid-cols-[minmax(0,1fr)_128px] @min-[64rem]/editor:col-span-2 @min-[64rem]/editor:grid-cols-1">
-            <div className="flex min-w-0 flex-col">
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600">
-                  <Code2 className="h-5 w-5" />
-                </div>
-                <h2 className="min-w-0 text-lg font-bold text-slate-900">
-                  {webDevelopment.title}
-                </h2>
-                <span className="shrink-0 rounded-md bg-indigo-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-indigo-600">
-                  {webDevelopment.badge}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-slate-600">
-                {webDevelopment.description}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                {webDevelopment.overview}
-              </p>
-              <div className="mt-3">
-                <ServiceTags title={webDevelopment.title} />
-              </div>
-              <Link
-                to="/contact"
-                className="mt-4 inline-flex w-fit items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-800 transition-colors hover:bg-blue-100"
-              >
-                Explore web development <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <ServiceVisual title={webDevelopment.title} className="min-h-28 @min-[64rem]/editor:min-h-32" />
-          </article>
-        )}
-      </div>
-
-      <div className="mt-4 grid gap-4 @min-[48rem]/editor:grid-cols-2 @min-[80rem]/editor:grid-cols-3">
-        {supportingServices.map((service) => {
+      <div className="grid gap-4 sm:grid-cols-2">
+        {services.map((service) => {
           const Icon = serviceIcons[service.title] ?? Sparkles;
+          const accent = serviceAccents[service.title] ?? "bg-slate-500/10 text-slate-600";
           return (
             <article
               key={service.title}
-              className="grid gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm @min-[40rem]/editor:grid-cols-[minmax(0,1fr)_112px] @min-[40rem]/editor:items-center"
+              className="overflow-hidden rounded-lg border border-[var(--chrome-border)] bg-[var(--content-bg)] shadow-sm transition-colors hover:border-[var(--file-color)]"
             >
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-indigo-50 text-indigo-600">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <h2 className="min-w-0 text-base font-bold text-slate-900">
-                    {service.title}
-                  </h2>
-                  <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
-                    {service.badge}
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-slate-600">{service.description}</p>
-                <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                  {service.overview}
-                </p>
-                <div className="mt-3">
-                  <ServiceTags title={service.title} />
-                </div>
-                <Link
-                  to="/contact"
-                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 hover:text-indigo-900"
-                >
-                  Explore service <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+              <div className="flex items-center gap-2.5 border-b border-[var(--chrome-border)] px-4 py-3">
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${accent}`}>
+                  <Icon aria-hidden="true" className="h-4 w-4" />
+                </span>
+                <h2 className="min-w-0 text-base font-bold text-[var(--chrome-text)]">{service.title}</h2>
               </div>
-              <ServiceVisual title={service.title} className="min-h-28" />
+              <div className="p-3">
+                <ServiceJsonBlock service={service} />
+              </div>
             </article>
           );
         })}
       </div>
-
-      {lowCode && (
-        <article className="mt-4 grid gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm @min-[40rem]/editor:grid-cols-[minmax(0,1fr)_minmax(140px,0.45fr)_auto] @min-[40rem]/editor:items-center">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-violet-50 text-violet-600">
-                <Boxes className="h-4 w-4" />
-              </div>
-              <h2 className="min-w-0 text-base font-bold text-slate-900">
-                {lowCode.title}
-              </h2>
-              <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
-                {lowCode.badge}
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-slate-600">{lowCode.description}</p>
-            <p className="mt-2 text-xs leading-relaxed text-slate-500">
-              {lowCode.overview}
-            </p>
-            <div className="mt-3">
-              <ServiceTags title={lowCode.title} />
-            </div>
-          </div>
-          <ServiceVisual title={lowCode.title} className="min-h-24" />
-          <Link
-            to="/contact"
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-indigo-50 px-4 py-2.5 text-xs font-semibold text-indigo-800 transition-colors hover:bg-indigo-100"
-          >
-            Explore low-code solutions <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </article>
-      )}
     </section>
   );
 }
+
+// Renders the service data as a cozy, hand-colorized JSON snippet styled like a little editor card.
+function ServiceJsonBlock({ service }: { service: Service }) {
+  const lastIndex = service.highlights.length - 1;
+  const panel = servicePanelAccents[service.title] ?? { panel: "bg-slate-500/[0.06] border-slate-500/15", dot: "bg-slate-400" };
+
+  return (
+    <div className={`overflow-hidden rounded-md border ${panel.panel}`}>
+      <div className="flex items-center gap-1.5 border-b border-[var(--chrome-border)]/60 px-3 py-1.5">
+        <span className={`h-1.5 w-1.5 rounded-full ${panel.dot}`} />
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--chrome-muted)]/30" />
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--chrome-muted)]/30" />
+        <span className="ml-1.5 truncate text-[10px] text-[var(--chrome-muted)]">{slugify(service.title)}.json</span>
+      </div>
+      <pre className="whitespace-pre-wrap break-words px-3.5 py-3 font-mono text-[12.5px] leading-[1.9]">
+        <code>
+          <JsonPunct text="{" />
+          {"\n  "}
+          <JsonKey text="service" />
+          <JsonPunct text=": " />
+          <JsonString text={service.title} />
+          <JsonPunct text="," />
+          {"\n  "}
+          <JsonKey text="summary" />
+          <JsonPunct text=": " />
+          <JsonString text={service.overview} />
+          <JsonPunct text="," />
+          {"\n  "}
+          <JsonKey text="highlights" />
+          <JsonPunct text=": [" />
+          {service.highlights.map((item, index) => (
+            <span key={item}>
+              {"\n    "}
+              <JsonString text={item} />
+              {index < lastIndex && <JsonPunct text="," />}
+            </span>
+          ))}
+          {"\n  "}
+          <JsonPunct text="]" />
+          {"\n"}
+          <JsonPunct text="}" />
+        </code>
+      </pre>
+    </div>
+  );
+}
+
+function JsonKey({ text }: { text: string }) {
+  return (
+    <>
+      <JsonPunct text='"' />
+      <span className="text-[var(--json-key)]">{text}</span>
+      <JsonPunct text='"' />
+    </>
+  );
+}
+
+function JsonString({ text }: { text: string }) {
+  return (
+    <>
+      <JsonPunct text='"' />
+      <span className="text-[var(--json-string)]">{text}</span>
+      <JsonPunct text='"' />
+    </>
+  );
+}
+
+function JsonPunct({ text }: { text: string }) {
+  return <span className="text-[var(--chrome-muted)]">{text}</span>;
+}
+

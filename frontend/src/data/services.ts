@@ -5,6 +5,11 @@ export const services = [
     description: "React & .NET end-to-end.",
     overview:
       "From product strategy to polished delivery, I design and ship web experiences that are fast, scalable, and easy to maintain.",
+    highlights: [
+      "Modern, responsive UI/UX",
+      "Scalable and maintainable code",
+      "Performance optimization",
+    ],
   },
   {
     title: "Cloud & DevOps",
@@ -12,6 +17,11 @@ export const services = [
     description: "Azure deployments & CI/CD.",
     overview:
       "I set up reliable delivery pipelines, Azure infrastructure, and deployment workflows so products can move from prototype to production smoothly.",
+    highlights: [
+      "Azure app services and infrastructure",
+      "CI/CD pipelines and automated deployments",
+      "Cost optimization and monitoring",
+    ],
   },
   {
     title: "AI Integration",
@@ -19,6 +29,11 @@ export const services = [
     description: "LLM features & automation.",
     overview:
       "I translate AI ideas into practical workflows, from intelligent search and copilots to workflow automation that saves real operational time.",
+    highlights: [
+      "Azure OpenAI / Foundry integrations",
+      "RAG pipelines and AI agents",
+      "Chatbots and workflow automation",
+    ],
   },
     {
     title: "Report Development",
@@ -26,6 +41,11 @@ export const services = [
     description: "Power BI & SQL reporting.",
     overview:
       "I create insightful and actionable reports, transforming raw data into clear visualizations that drive informed decision-making.",
+    highlights: [
+      "Power BI dashboards and data models",
+      "SQL Server reporting and ETL",
+      "Actionable, decision-ready insights",
+    ],
   },
     {
     title: "Low-Code No-Code Development",
@@ -33,6 +53,11 @@ export const services = [
     description: "Mendix",
     overview:
       "I build applications using low-code/no-code platforms like Mendix, enabling rapid development and deployment of business solutions.",
+    highlights: [
+      "Rapid delivery with Mendix / Power Apps",
+      "SharePoint-integrated business solutions",
+      "Faster time-to-value for internal tools",
+    ],
   },
     {
     title: "Automation",
@@ -40,5 +65,10 @@ export const services = [
     description: "Power Automate, n8n",
     overview:
       "I design and implement automation solutions that streamline repetitive tasks, improve efficiency, and reduce operational overhead.",
+    highlights: [
+      "Power Automate and Logic Apps flows",
+      "n8n workflow orchestration",
+      "Reduced manual, repetitive work",
+    ],
   },
 ];

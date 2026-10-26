@@ -9,12 +9,12 @@ import { services } from "./services";
 import { skills } from "./tools";
 
 export const workspacePages = [
-  { label: "Home", file: "Home.tsx", to: "/", group: "pages", content: [homeContent, projects, aboutContent, certifications, services] },
-  { label: "Projects", file: "Projects.tsx", to: "/projects", group: "pages", content: projects },
-  { label: "Services", file: "Services.tsx", to: "/services", group: "pages", content: services },
-  { label: "Tools", file: "Tools.tsx", to: "/tools", group: "pages", content: skills },
-  { label: "About", file: "About.tsx", to: "/about", group: "profile", content: [aboutContent, education, employment, certifications] },
-  { label: "Contact", file: "Contact.tsx", to: "/contact", group: "profile", content: contactContent },
+  { label: "Home", file: "Home.md", to: "/", group: "pages", content: [homeContent, projects, aboutContent, certifications, services] },
+  { label: "Projects", file: "Projects.md", to: "/projects", group: "pages", content: projects },
+  { label: "Services", file: "Services.md", to: "/services", group: "pages", content: services },
+  { label: "Tools", file: "Tools.md", to: "/tools", group: "pages", content: skills },
+  { label: "About", file: "About.md", to: "/about", group: "profile", content: [aboutContent, education, employment, certifications] },
+  { label: "Contact", file: "Contact.md", to: "/contact", group: "profile", content: contactContent },
 ].map(({ content, ...page }) => ({
   ...page,
   end: page.to === "/",

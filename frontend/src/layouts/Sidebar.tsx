@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ChevronDown, ChevronRight, FileCode, Folder, FolderOpen } from "lucide-react";
+import { ChevronDown, ChevronRight, FileJson, FileText, Folder, FolderOpen } from "lucide-react";
 import { profile } from "../data/profile";
 import { workspacePages } from "../data/workspacePages";
 
@@ -11,13 +11,12 @@ type NavItem = {
   end?: boolean;
 };
 
-const pagesNav = workspacePages.filter((page) => page.group === "pages");
-const profileNav = workspacePages.filter((page) => page.group === "profile");
+// Always-collapsed, childless folder used purely to mimic a real project tree.
+const decorativeFolders = [".vscode"];
 
 export default function Sidebar() {
   const [rootOpen, setRootOpen] = useState(true);
-  const [pagesOpen, setPagesOpen] = useState(true);
-  const [profileOpen, setProfileOpen] = useState(true);
+  const [contentOpen, setContentOpen] = useState(true);
 
   return (
     <aside aria-label="File explorer" className="workspace-sidebar flex h-full w-full flex-col overflow-hidden border-b lg:w-[260px] lg:border-b-0 lg:border-r">
@@ -25,16 +24,6 @@ export default function Sidebar() {
         <span className="workspace-sidebar-heading text-[11px] font-semibold uppercase tracking-[0.12em]">
           Explorer
         </span>
-      </div>
-
-      <div className="workspace-sidebar-rule flex shrink-0 items-center gap-2 border-b px-3 py-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--avatar-bg)] text-[11px] font-bold text-white">
-          {profile.initials}
-        </span>
-        <div className="min-w-0">
-          <p className="workspace-sidebar-title truncate text-xs font-semibold">{profile.name}</p>
-          <p className="workspace-sidebar-muted truncate text-[10px]">{profile.role}</p>
-        </div>
       </div>
 
       <nav aria-label="Portfolio files" className="min-h-0 flex-1 overflow-y-auto py-2 text-[13px]">
@@ -47,26 +36,61 @@ export default function Sidebar() {
 
         {rootOpen && (
           <>
-            <FolderRow
-              depth={1}
-              label="pages"
-              open={pagesOpen}
-              onToggle={() => setPagesOpen((current) => !current)}
-            />
-            {pagesOpen && pagesNav.map((item) => <FileRow key={item.to} depth={2} item={item} />)}
+            <StaticFolderRow depth={1} label={decorativeFolders[0]} />
 
             <FolderRow
               depth={1}
-              label="profile"
-              open={profileOpen}
-              onToggle={() => setProfileOpen((current) => !current)}
+              label="content"
+              open={contentOpen}
+              onToggle={() => setContentOpen((current) => !current)}
             />
-            {profileOpen && profileNav.map((item) => <FileRow key={item.to} depth={2} item={item} />)}
+            {contentOpen && workspacePages.map((item) => <FileRow key={item.to} depth={2} item={item} />)}
+
+            <StaticFileRow depth={1} label="README.md" icon={FileText} color="text-[var(--file-color)]" />
+            <StaticFileRow depth={1} label="package.json" icon={FileJson} color="text-amber-500" />
           </>
         )}
       </nav>
-
     </aside>
+  );
+}
+
+// Always-collapsed folder row with no children, purely for visual realism.
+function StaticFolderRow({ depth, label }: { depth: number; label: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="flex w-full items-center gap-1 py-[3px] pr-2 text-[var(--chrome-muted)]"
+      style={{ paddingLeft: 8 + depth * 14 }}
+    >
+      <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+      <Folder className="h-4 w-4 shrink-0 text-[var(--folder-color)]" />
+      <span className="truncate font-medium">{label}</span>
+    </div>
+  );
+}
+
+// Non-navigable file row, purely for visual realism.
+function StaticFileRow({
+  depth,
+  label,
+  icon: Icon,
+  color,
+}: {
+  depth: number;
+  label: string;
+  icon: typeof FileText;
+  color: string;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className="flex items-center gap-1.5 py-[3px] pr-2 text-[var(--chrome-muted)]"
+      style={{ paddingLeft: 8 + depth * 14 + 16 }}
+    >
+      <Icon className={`h-4 w-4 shrink-0 ${color}`} />
+      <span className="truncate">{label}</span>
+    </div>
   );
 }
 
@@ -117,7 +141,7 @@ function FileRow({ depth, item }: { depth: number; item: NavItem }) {
         }`
       }
     >
-      <FileCode className="h-4 w-4 shrink-0 text-[var(--file-color)]" />
+      <FileText className="h-4 w-4 shrink-0 text-[var(--file-color)]" />
       <span className="truncate">{item.file}</span>
     </NavLink>
   );
