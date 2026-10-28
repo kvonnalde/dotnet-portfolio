@@ -1,4 +1,3 @@
-using Azure.Core;
 using Azure.Identity;
 using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
@@ -34,7 +33,7 @@ public sealed class AppInsightsService : IInsightsService
 
     public async Task<InsightsLogsResponse> GetRecentLogsAsync(int take, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_options.ResourceId))
+        if (string.IsNullOrWhiteSpace(_options.WorkspaceId))
         {
             return new InsightsLogsResponse([], "Application Insights is not configured for this environment.");
         }
@@ -42,8 +41,8 @@ public sealed class AppInsightsService : IInsightsService
         try
         {
             var kql = string.Format(QueryTemplate, Math.Clamp(take, 1, 200));
-            var response = await _client.QueryResourceAsync(
-                new ResourceIdentifier(_options.ResourceId),
+            var response = await _client.QueryWorkspaceAsync(
+                _options.WorkspaceId,
                 kql,
                 new QueryTimeRange(TimeSpan.FromHours(6)),
                 cancellationToken: cancellationToken);

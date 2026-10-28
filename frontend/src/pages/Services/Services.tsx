@@ -29,14 +29,14 @@ const serviceAccents: Record<string, string> = {
   Automation: "bg-amber-500/10 text-amber-600",
 };
 
-// Soft, hue-matched tint for each service's code card so it reads as part of the page, not a terminal.
-const servicePanelAccents: Record<string, { panel: string; dot: string }> = {
-  "Web App Development": { panel: "bg-blue-500/[0.06] border-blue-500/15", dot: "bg-blue-400" },
-  "Cloud & DevOps": { panel: "bg-sky-500/[0.06] border-sky-500/15", dot: "bg-sky-400" },
-  "AI Integration": { panel: "bg-indigo-500/[0.06] border-indigo-500/15", dot: "bg-indigo-400" },
-  "Report Development": { panel: "bg-emerald-500/[0.06] border-emerald-500/15", dot: "bg-emerald-400" },
-  "Low-Code No-Code Development": { panel: "bg-violet-500/[0.06] border-violet-500/15", dot: "bg-violet-400" },
-  Automation: { panel: "bg-amber-500/[0.06] border-amber-500/15", dot: "bg-amber-400" },
+// Accent glow + badge styling per service, used on the dark "code card" so each service still reads distinctly.
+const servicePanelAccents: Record<string, { ring: string; dot: string; chip: string }> = {
+  "Web App Development": { ring: "ring-blue-500/20", dot: "bg-blue-400", chip: "bg-blue-500/10 text-blue-300 ring-blue-500/20" },
+  "Cloud & DevOps": { ring: "ring-sky-500/20", dot: "bg-sky-400", chip: "bg-sky-500/10 text-sky-300 ring-sky-500/20" },
+  "AI Integration": { ring: "ring-indigo-500/20", dot: "bg-indigo-400", chip: "bg-indigo-500/10 text-indigo-300 ring-indigo-500/20" },
+  "Report Development": { ring: "ring-emerald-500/20", dot: "bg-emerald-400", chip: "bg-emerald-500/10 text-emerald-300 ring-emerald-500/20" },
+  "Low-Code No-Code Development": { ring: "ring-violet-500/20", dot: "bg-violet-400", chip: "bg-violet-500/10 text-violet-300 ring-violet-500/20" },
+  Automation: { ring: "ring-amber-500/20", dot: "bg-amber-400", chip: "bg-amber-500/10 text-amber-300 ring-amber-500/20" },
 };
 
 function slugify(title: string) {
@@ -81,18 +81,24 @@ export default function Services() {
   );
 }
 
-// Renders the service data as a cozy, hand-colorized JSON snippet styled like a little editor card.
+// Renders the service data as a modern dark "code card" — same terminal language as the Application Insights page.
 function ServiceJsonBlock({ service }: { service: Service }) {
   const lastIndex = service.highlights.length - 1;
-  const panel = servicePanelAccents[service.title] ?? { panel: "bg-slate-500/[0.06] border-slate-500/15", dot: "bg-slate-400" };
+  const panel = servicePanelAccents[service.title] ?? { ring: "ring-slate-500/20", dot: "bg-slate-400", chip: "bg-slate-500/10 text-slate-300 ring-slate-500/20" };
 
   return (
-    <div className={`overflow-hidden rounded-md border ${panel.panel}`}>
-      <div className="flex items-center gap-1.5 border-b border-[var(--chrome-border)]/60 px-3 py-1.5">
-        <span className={`h-1.5 w-1.5 rounded-full ${panel.dot}`} />
-        <span className="h-1.5 w-1.5 rounded-full bg-[var(--chrome-muted)]/30" />
-        <span className="h-1.5 w-1.5 rounded-full bg-[var(--chrome-muted)]/30" />
-        <span className="ml-1.5 truncate text-[10px] text-[var(--chrome-muted)]">{slugify(service.title)}.json</span>
+    <div className={`overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b from-[#121218] to-[#0a0a0d] shadow-lg shadow-black/30 ring-1 ${panel.ring}`}>
+      <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3 py-2 backdrop-blur">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+        </div>
+        <span className="ml-1 truncate text-[11px] text-slate-500">{slugify(service.title)}.json</span>
+        <span className={`ml-auto flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${panel.chip}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${panel.dot}`} />
+          service
+        </span>
       </div>
       <pre className="whitespace-pre-wrap break-words px-3.5 py-3 font-mono text-[12.5px] leading-[1.9]">
         <code>
@@ -131,7 +137,7 @@ function JsonKey({ text }: { text: string }) {
   return (
     <>
       <JsonPunct text='"' />
-      <span className="text-[var(--json-key)]">{text}</span>
+      <span className="text-cyan-300">{text}</span>
       <JsonPunct text='"' />
     </>
   );
@@ -141,13 +147,13 @@ function JsonString({ text }: { text: string }) {
   return (
     <>
       <JsonPunct text='"' />
-      <span className="text-[var(--json-string)]">{text}</span>
+      <span className="text-emerald-300">{text}</span>
       <JsonPunct text='"' />
     </>
   );
 }
 
 function JsonPunct({ text }: { text: string }) {
-  return <span className="text-[var(--chrome-muted)]">{text}</span>;
+  return <span className="text-slate-500">{text}</span>;
 }
 
