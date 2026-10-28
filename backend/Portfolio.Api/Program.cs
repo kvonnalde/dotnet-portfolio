@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Portfolio.Infrastructure.Data;
 using Portfolio.Application.Interfaces;
 using Portfolio.Application.Services;
+using Portfolio.Infrastructure.Insights;
 using Portfolio.Infrastructure.Rag;
 using Portfolio.Infrastructure.Repositories;
 
@@ -41,6 +42,9 @@ builder.Services.AddHttpClient<OpenAiClient>((sp, client) =>
     client.Timeout = TimeSpan.FromSeconds(60);
 });
 builder.Services.AddScoped<IChatService, RagChatService>();
+
+builder.Services.Configure<AppInsightsOptions>(builder.Configuration.GetSection(AppInsightsOptions.SectionName));
+builder.Services.AddScoped<IInsightsService, AppInsightsService>();
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>

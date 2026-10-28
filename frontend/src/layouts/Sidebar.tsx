@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ChevronDown, ChevronRight, FileJson, FileText, Folder, FolderOpen } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, Folder, FolderOpen, TerminalSquare } from "lucide-react";
 import { profile } from "../data/profile";
 import { workspacePages } from "../data/workspacePages";
 
@@ -47,7 +47,7 @@ export default function Sidebar() {
             {contentOpen && workspacePages.map((item) => <FileRow key={item.to} depth={2} item={item} />)}
 
             <StaticFileRow depth={1} label="README.md" icon={FileText} color="text-[var(--file-color)]" />
-            <StaticFileRow depth={1} label="package.json" icon={FileJson} color="text-amber-500" />
+            <FileRow depth={1} item={{ label: "Application Insights", file: "application-insights.log", to: "/insights" }} icon={TerminalSquare} color="text-emerald-500" />
           </>
         )}
       </nav>
@@ -128,7 +128,8 @@ function FolderRow({
   );
 }
 
-function FileRow({ depth, item }: { depth: number; item: NavItem }) {
+function FileRow({ depth, item, icon: Icon, color }: { depth: number; item: NavItem; icon?: typeof FileText; color?: string }) {
+  const RowIcon = Icon ?? FileText;
   return (
     <NavLink
       to={item.to}
@@ -141,7 +142,7 @@ function FileRow({ depth, item }: { depth: number; item: NavItem }) {
         }`
       }
     >
-      <FileText className="h-4 w-4 shrink-0 text-[var(--file-color)]" />
+      <RowIcon className={`h-4 w-4 shrink-0 ${color ?? "text-[var(--file-color)]"}`} />
       <span className="truncate">{item.file}</span>
     </NavLink>
   );

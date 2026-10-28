@@ -6,6 +6,7 @@ import Services from "../pages/Services/Services";
 import Tools from "../pages/Tools/Tools";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
+import ApplicationInsights from "../pages/ApplicationInsights/ApplicationInsights";
 
 export default function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ export default function AppRoutes() {
         <Route path="tools" element={<Tools />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="insights" element={<ApplicationInsights />} />
       </Route>
     </Routes>
   );
